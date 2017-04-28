@@ -37,9 +37,10 @@ struct Tweet: CustomStringConvertible
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, APITwitterDelegate  {
     var t:[Tweet] = tweetData
-    var tjson:[NSDictionary?] = [nil]
+    
 
     @IBOutlet weak var searchTextField: UITextField!
+    @IBOutlet weak var tweetTableView: UITableView!
     
     var tweet: Tweet = Tweet(name: "I", text: "Saome text", date: "2017-04-27")
     
@@ -73,7 +74,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     internal func receivedTweet(tweetArray: [Tweet]) {
-        getToken()
+        self.tweetTableView.reloadData()
     }
 
  //   curl --get 'https://api.twitter.com/1.1/search/tweets.json' --data 'count=10&q=ecole' --header 'Authorization: Bearer AAAAAAAAAAAAAAAAAAAAAPFp0QAAAAAAP5EAC2I%2B43KvzuvrxjDmzjBPW%2Fw%3DPuvTNX2Mz8psCsQdxFsOjlYxUnDToskJYE01KDnuBLQwBsCiO1' --verbose
@@ -98,12 +99,32 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
                 
             else if nil != data {
-                    do {
-                        if let dic2 = try JSONSerialization.jsonObject(with: data!, options: []) as? [NSDictionary] {
-                            self.tjson = dic2
-                            print(dic2)
+                print("DATA")
 
+                    do {
+                        if let tw : NSDictionary = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary
+                        {
+                            if let i = tw["statuses"] as? NSArray
+                            {
+                                print("tw[statuses] as? NSArray")
+                                self.t.removeAll()
+                                //print(i)
+                                for it in i
+                                {
+                                  if let item = it as? NSDictionary
+                                  {
+                                    //print("item = it as? NSDictionary")
+                                    if let u = item["user"] as? NSDictionary
+                                    {
+        
+                                        self.t.append(Tweet(name: u["name"]! as! String, text: item["text"]! as! String, date: item["created_at"]! as! String))
+                                    }
+                                  }
+                                }
+                                 self.tweetTableView.reloadData()
+                             }
                         }
+                        //print(self.t)
                     }
 //            else if nil != data {
 //                do {
@@ -151,7 +172,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 do {
                     if let dic : Dictionary = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: Any]
                     {
-                        print(dic)
                         AppDelegate.appToken = dic["access_token"] as! String
                     }
                 }
@@ -167,14 +187,23 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         if textField.text != ""
         {
             self.strInTweet_100(str: textField.text!)
+            receivedTweet(tweetArray: self.t)
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tweetTableView.dataSource = self
+        self.tweetTableView.delegate = self
+        self.tweetTableView.rowHeight = UITableViewAutomaticDimension
+        self.tweetTableView.estimatedRowHeight = 140
+        print("SAMPLE")
+        print(t)
+
         self.getToken()
         
         self.searchTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        
 
         
         
@@ -191,14 +220,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return t.count
+        print("COUNT \(self.t.count)")
+        return self.t.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Tweet", for: indexPath)  as! TweetCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "TweetCell", for: indexPath)  as! TweetCell
         
-        let tw = t[indexPath.row] as Tweet
+        let tw = self.t[indexPath.row] as Tweet
         cell.tweet = tw
+        print(cell.nameLabel)
         return cell
     }
     

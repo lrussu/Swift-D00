@@ -12,10 +12,4 @@ import Foundation
 
 //Set up sample data
 
-let tweetData = [
-    Tweet(name:"Bill Evans", text:"Drugs", date: "Today 14:55"),
-    Tweet(name:"Bill Evans", text:"Drugs", date: "Today 14:55"),
-    Tweet(name:"Bill Evans", text:"Drugs", date: "Today 14:55"),
-    Tweet(name:"Bill Evans", text:"Drugs", date: "Today 14:55"),
-    Tweet(name:"Bill Evans", text:"Drugs", date: "Today 14:55")
- ]
+let tweetData: [Tweet] = []

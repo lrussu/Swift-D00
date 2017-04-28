@@ -60,10 +60,10 @@
 		A9066F491EB147A9002A80C8 /* D04 */ = {
 			isa = PBXGroup;
 			children = (
-				A935B3AE1EB27DA500645A8F /* SampleTweet.swift */,
 				A9066F4A1EB147A9002A80C8 /* AppDelegate.swift */,
 				A9066F4C1EB147A9002A80C8 /* ViewController.swift */,
 				A935B3A81EB274F400645A8F /* TableTableViewController.swift */,
+				A935B3AE1EB27DA500645A8F /* SampleTweet.swift */,
 				A935B3AA1EB2795300645A8F /* TweetTableCellTableViewCell.swift */,
 				A9066F4E1EB147A9002A80C8 /* Main.storyboard */,
 				A9066F511EB147A9002A80C8 /* Assets.xcassets */,
